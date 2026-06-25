@@ -1,0 +1,30 @@
+# Backend Python — testé sous Python 3.11 (conda env "picto")
+# Installation : pip install -r requirements.txt
+#
+# ⚠️ Après installation, lancer le correctif de compatibilité :
+#       python patch_fastcoref.py
+#    (rend fastcoref compatible avec transformers >= 5.x)
+
+# --- API web ---
+flask==3.1.3
+flask-cors==6.0.5
+requests==2.34.2
+
+# --- NLP : tokenisation, NER, coréférence (propp-fr) ---
+spacy==3.8.14
+spacy-curated-transformers==0.3.1
+torch==2.12.1
+transformers==5.12.1
+propp-fr==0.1.0
+TorchCRF==1.1.0
+
+# --- Coréférence complémentaire (LingMess) ---
+fastcoref==2.1.6
+
+# --- Données ---
+numpy==2.4.6
+pandas==3.0.3
+
+# Modèles spaCy à télécharger séparément (voir README) :
+#   python -m spacy download fr_core_news_lg
+#   python -m spacy download fr_dep_news_trf

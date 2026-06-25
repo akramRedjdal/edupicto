@@ -1,0 +1,107 @@
+# ─── Python ───────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+
+# ─── Modèles propp-fr (téléchargés automatiquement au 1er lancement) ───
+AntoineBourgois/
+
+# ─── Artefacts générés ────────────────────────────────────
+coref.html
+*.log
+srv*.log
+
+# ─── Secrets (ne jamais committer) ────────────────────────
+.mistral_key
+*.key
+.env
+
+# ─── Anciens essais (non liés à l'app) ────────────────────
+outputs_old/
+
+# ─── Éditeurs / IDE ───────────────────────────────────────
+.vscode/
+.idea/
+.claude/
+**/.DS_Store
+
+# ─── Flutter / Dart (régénéré par `flutter pub get` / build) ───
+picto_express/build/
+picto_express/.dart_tool/
+picto_express/.flutter-plugins
+picto_express/.flutter-plugins-dependencies
+picto_express/.packages
+picto_express/.metadata
+
+# ─── Pack ARASAAC : ignorer tout sauf les pictos référencés par l ontologie ───
+picto_express/assets/Picto_Arasaac/*
+!picto_express/assets/Picto_Arasaac/ajout cuisine.png
+!picto_express/assets/Picto_Arasaac/aller.png
+!picto_express/assets/Picto_Arasaac/apres_midi.png
+!picto_express/assets/Picto_Arasaac/avocat de la défense.png
+!picto_express/assets/Picto_Arasaac/avocat(fruit).png
+!picto_express/assets/Picto_Arasaac/beurre.png
+!picto_express/assets/Picto_Arasaac/campagne.png
+!picto_express/assets/Picto_Arasaac/carotte.png
+!picto_express/assets/Picto_Arasaac/casser oeuf.png
+!picto_express/assets/Picto_Arasaac/chauffage.png
+!picto_express/assets/Picto_Arasaac/couper.png
+!picto_express/assets/Picto_Arasaac/cuisine.png
+!picto_express/assets/Picto_Arasaac/demander.png
+!picto_express/assets/Picto_Arasaac/donner.png
+!picto_express/assets/Picto_Arasaac/eau.png
+!picto_express/assets/Picto_Arasaac/faire.png
+!picto_express/assets/Picto_Arasaac/farine.png
+!picto_express/assets/Picto_Arasaac/ferme.png
+!picto_express/assets/Picto_Arasaac/fille.png
+!picto_express/assets/Picto_Arasaac/four.png
+!picto_express/assets/Picto_Arasaac/grand-mère.png
+!picto_express/assets/Picto_Arasaac/gruyère.png
+!picto_express/assets/Picto_Arasaac/hameau.png
+!picto_express/assets/Picto_Arasaac/herbe.png
+!picto_express/assets/Picto_Arasaac/huile.png
+!picto_express/assets/Picto_Arasaac/inférieur.png
+!picto_express/assets/Picto_Arasaac/ingredient.png
+!picto_express/assets/Picto_Arasaac/kilomètre.png
+!picto_express/assets/Picto_Arasaac/lapin.png
+!picto_express/assets/Picto_Arasaac/laver les mains.png
+!picto_express/assets/Picto_Arasaac/loin.png
+!picto_express/assets/Picto_Arasaac/manger.png
+!picto_express/assets/Picto_Arasaac/matin.png
+!picto_express/assets/Picto_Arasaac/midi.png
+!picto_express/assets/Picto_Arasaac/non.png
+!picto_express/assets/Picto_Arasaac/oeuf.png
+!picto_express/assets/Picto_Arasaac/ordonné.png
+!picto_express/assets/Picto_Arasaac/organiser.png
+!picto_express/assets/Picto_Arasaac/oui.png
+!picto_express/assets/Picto_Arasaac/parents.png
+!picto_express/assets/Picto_Arasaac/passoire.png
+!picto_express/assets/Picto_Arasaac/placer.png
+!picto_express/assets/Picto_Arasaac/poivre.png
+!picto_express/assets/Picto_Arasaac/pomme.png
+!picto_express/assets/Picto_Arasaac/poser les chaises sur la table.png
+!picto_express/assets/Picto_Arasaac/poêle.png
+!picto_express/assets/Picto_Arasaac/pâte.png
+!picto_express/assets/Picto_Arasaac/retirer.png
+!picto_express/assets/Picto_Arasaac/rouleau à pâtisserie.png
+!picto_express/assets/Picto_Arasaac/râper.png
+!picto_express/assets/Picto_Arasaac/réchauffer.png
+!picto_express/assets/Picto_Arasaac/salade.png
+!picto_express/assets/Picto_Arasaac/saladier.png
+!picto_express/assets/Picto_Arasaac/salle à manger.png
+!picto_express/assets/Picto_Arasaac/sel.png
+!picto_express/assets/Picto_Arasaac/soir.png
+!picto_express/assets/Picto_Arasaac/table.png
+!picto_express/assets/Picto_Arasaac/tarte aux pommes.png
+!picto_express/assets/Picto_Arasaac/tourtière.png
+!picto_express/assets/Picto_Arasaac/tupperware.png
+!picto_express/assets/Picto_Arasaac/village.png
+!picto_express/assets/Picto_Arasaac/ville.png
+!picto_express/assets/Picto_Arasaac/vinaigre.png
+!picto_express/assets/Picto_Arasaac/vivre.png
+!picto_express/assets/Picto_Arasaac/volaille.png
+!picto_express/assets/Picto_Arasaac/école.png
+!picto_express/assets/Picto_Arasaac/étaler.png
+!picto_express/assets/Picto_Arasaac/œuf.png

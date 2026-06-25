@@ -1,0 +1,10 @@
+{
+  "nuit": { "lemme": "nuit", "categorie": "Temps", "picto": "nuit.png" },
+  "renard": { "lemme": "renard", "categorie": "Animal", "picto": "renard.png" },
+  "renardeaux": { "lemme": "renard", "categorie": "Animal", "picto": "renard.png" },
+  "chasser": { "lemme": "chasser", "categorie": "Action", "picto": "chasser.png" },
+  "matin": { "lemme": "matin", "categorie": "Temps", "picto": "matin.png" },
+  "ville": {"picto": "ville.png"},
+  "forêt": {"picto": "forêt.png"},
+  "renardeau": { "lemme": "renard", "categorie": "Animal", "picto": "renard.png" }
+}

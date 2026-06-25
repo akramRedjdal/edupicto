@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lecture en pictogrammes</title>
+<style>
+  :root {
+    --bg: #fbfaf7;
+    --texte: #2b2b2b;
+    --propre: #457b9d;   /* personne */
+    --verbe:  #2a9d8f;   /* action */
+    --commun: #e9a23b;   /* objet / lieu */
+    --mot-seul: #9a9a9a;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+    background: var(--bg);
+    color: var(--texte);
+    padding: 24px;
+  }
+  h1 { font-size: 22px; font-weight: 600; margin: 0 0 16px; }
+
+  .saisie {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 28px;
+    flex-wrap: wrap;
+  }
+  textarea {
+    flex: 1 1 420px;
+    min-height: 90px;
+    font-size: 18px;
+    line-height: 1.5;
+    padding: 12px 14px;
+    border: 2px solid #d8d3c7;
+    border-radius: 10px;
+    resize: vertical;
+  }
+  button {
+    font-size: 18px;
+    font-weight: 600;
+    padding: 0 28px;
+    border: none;
+    border-radius: 10px;
+    background: var(--propre);
+    color: #fff;
+    cursor: pointer;
+  }
+  button:hover { filter: brightness(1.08); }
+
+  /* Flux de lecture */
+  #flux {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: 10px 14px;
+    line-height: 1.4;
+  }
+  figure {
+    margin: 0;
+    width: 132px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 8px;
+    border-radius: 12px;
+    border: 3px solid transparent;
+    background: #fff;
+  }
+  figure.propre { border-color: var(--propre); }
+  figure.verbe  { border-color: var(--verbe); }
+  figure.commun { border-color: var(--commun); }
+
+  figure img {
+    width: 110px;
+    height: 110px;
+    object-fit: contain;
+  }
+  figcaption {
+    margin-top: 6px;
+    font-size: 19px;
+    font-weight: 600;
+    text-align: center;
+    word-break: break-word;
+  }
+
+  /* Mot sans pictogramme : texte seul dans le flux */
+  .mot-seul {
+    font-size: 19px;
+    color: var(--mot-seul);
+    align-self: flex-end;
+    padding-bottom: 10px;
+  }
+  /* Saut de ligne (numéros de liste) */
+  .saut { flex-basis: 100%; height: 0; }
+
+  #etat { margin-bottom: 16px; font-size: 16px; color: #777; min-height: 20px; }
+</style>
+</head>
+<body>
+  <h1>Lecture en pictogrammes</h1>
+
+  <div class="saisie">
+    <textarea id="texte" placeholder="Écris une phrase…">Léo est dans la cuisine. Il prépare une salade. Il coupe l'avocat.</textarea>
+    <button id="lire">Lire</button>
+  </div>
+
+  <div id="etat"></div>
+  <div id="flux"></div>
+
+<script>
+const CDN = "https://static.arasaac.org/pictograms";
+const urlPicto = id => `${CDN}/${id}/${id}_500.png`;
+
+const fluxEl  = document.getElementById("flux");
+const etatEl  = document.getElementById("etat");
+const btn     = document.getElementById("lire");
+const txtEl   = document.getElementById("texte");
+
+async function lire() {
+  const texte = txtEl.value.trim();
+  if (!texte) return;
+
+  etatEl.textContent = "Analyse…";
+  fluxEl.innerHTML = "";
+
+  let data;
+  try {
+    const r = await fetch("/pictogramiser", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ texte })
+    });
+    if (!r.ok) throw new Error("HTTP " + r.status);
+    data = await r.json();
+  } catch (e) {
+    etatEl.textContent = "Erreur serveur : " + e.message;
+    return;
+  }
+
+  etatEl.textContent = "";
+  for (const el of data.flux_de_lecture) {
+    const mot = (el.mot || "").trim();
+
+    // Numéro de liste / séparateur → saut de ligne
+    if (mot === "") {
+      const s = document.createElement("div");
+      s.className = "saut";
+      fluxEl.appendChild(s);
+      continue;
+    }
+
+    if (el.picto) {
+      // Pictogramme + texte dessous
+      const fig = document.createElement("figure");
+      fig.className = el.type || "commun";
+
+      const img = document.createElement("img");
+      img.src = urlPicto(el.picto);
+      img.alt = mot;
+      // Image ARASAAC absente → on retombe sur le texte seul
+      img.onerror = () => { fig.replaceWith(motSeul(mot)); };
+
+      const cap = document.createElement("figcaption");
+      cap.textContent = mot;
+
+      fig.appendChild(img);
+      fig.appendChild(cap);
+      fluxEl.appendChild(fig);
+    } else {
+      // Mot sans concept dans l'ontologie → texte seul
+      fluxEl.appendChild(motSeul(mot));
+    }
+  }
+}
+
+function motSeul(mot) {
+  const span = document.createElement("span");
+  span.className = "mot-seul";
+  span.textContent = mot;
+  return span;
+}
+
+btn.addEventListener("click", lire);
+txtEl.addEventListener("keydown", e => {
+  if (e.key === "Enter" && e.ctrlKey) lire();   // Ctrl+Entrée = lire
+});
+</script>
+</body>
+</html>
