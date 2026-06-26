@@ -145,8 +145,7 @@ flutter build apk      # Android
   d'analyse (CamemBERT-large). `spacy.prefer_gpu()` bascule automatiquement.
 - **Ontologie** : `EduPicto.owx` (format OWL/XML, éditable avec Protégé). Les
   concepts y sont reliés à des `id ARASAAC` et regroupés par classe.
-- **Modèles** : le dossier `AntoineBourgois/` (modèles propp-fr) est ignoré par git
-  et recréé automatiquement au premier lancement du serveur.
+
 
 ## Structure
 
