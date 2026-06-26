@@ -1,7 +1,7 @@
 ---
 title: EduPicto API
 emoji: 🧩
-colorFrom: orange
+colorFrom: yellow
 colorTo: pink
 sdk: docker
 app_port: 7860

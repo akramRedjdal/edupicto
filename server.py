@@ -185,9 +185,14 @@ def detecter_contexte_automatique(doc):
 
 @app.route('/')
 def index():
-    # Sert le frontend (saisie texte + affichage des pictogrammes)
-    with open("index.html", encoding="utf-8") as f:
-        return f.read()
+    # En local : sert la page de test. En conteneur (HF) : index.html absent
+    # -> on renvoie un health check JSON (évite le 500 sur le ping de HF).
+    try:
+        with open("index.html", encoding="utf-8") as f:
+            return f.read()
+    except FileNotFoundError:
+        return jsonify({"status": "ok", "service": "EduPicto API",
+                        "endpoints": ["/pictogramiser", "/generer"]})
 
 
 def analyser_texte(texte_brut):

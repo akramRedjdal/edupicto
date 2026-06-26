@@ -26,7 +26,7 @@ import requests
 
 OWX = "EduPicto.owx"
 MISTRAL_URL = "https://api.mistral.ai/v1/chat/completions"
-MODELE = "mistral-small-latest"
+MODELE = "ministral-14b-2512"
 
 # Concepts techniques à exclure de la palette (pas des mots affichables)
 EXCLURE_PREFIXES = ("contexte_",)
