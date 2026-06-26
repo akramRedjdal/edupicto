@@ -1,6 +1,6 @@
 # EduPicto — Aide à la lecture en pictogrammes
 
-Application d'aide à la lecture pour enfants autistes. Un texte est transformé en
+Application d'aide à la lecture pour enfants avec autisme. Un texte est transformé en
 **pictogrammes ARASAAC** (avec le mot écrit dessous), en s'appuyant sur une
 **ontologie de concepts** et une **résolution de coréférence** (les pronoms « il /
 elle » renvoient au bon personnage).
