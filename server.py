@@ -1,3 +1,4 @@
+import os
 import re
 import unicodedata
 from flask import Flask, request, jsonify
@@ -10,8 +11,11 @@ import generer_texte
 app = Flask(__name__)
 CORS(app)
 
-print("Chargement de spaCy (fr_core_news_lg)")
-nlp = spacy.load("fr_core_news_lg")
+# Modèle transformer : POS/lemmatisation plus fiables que fr_core_news_lg
+# (ex: "Elle marche" correctement étiqueté VERB), crucial pour la polysémie.
+print("Chargement de spaCy (fr_dep_news_trf)")
+spacy.prefer_gpu()
+nlp = spacy.load("fr_dep_news_trf")
 
 print("Analyse et indexation sémantique du fichier EduPicto.owx...")
 
@@ -31,6 +35,16 @@ def charger_ontologie_xml(fichier_chemin):
     # Extraction des id ARASAAC
     id_assertions = re.findall(r'<AnnotationAssertion>\s*<AnnotationProperty IRI="#arasaac_id"/>\s*<IRI>#([^<]+)</IRI>\s*<Literal[^>]*>([^<]+)</Literal>\s*</AnnotationAssertion>', xml_str)
     ind_id = {ind: aid.strip() for ind, aid in id_assertions}
+
+    # Catégorie grammaticale (POS) :
+    #  - déduite de la classe (Action=verbe, Adjectif, Adverbe, sinon nom)
+    #  - surchargée si l'ontologie déclare explicitement #categorieGrammaticale
+    #    (utile pour la polysémie : ex. "marche" verbe vs "marché" nom)
+    def classe_vers_pos(cls):
+        return {"Action": "VERB", "Adjectif": "ADJ", "Adverbe": "ADV"}.get(cls, "NOUN")
+    pos_assertions = re.findall(r'<DataPropertyAssertion>\s*<DataProperty IRI="#categorieGrammaticale"/>\s*<NamedIndividual IRI="#([^"]+)"/>\s*<Literal[^>]*>([^<]+)</Literal>\s*</DataPropertyAssertion>', xml_str)
+    ind_pos_explicite = {ind: val.strip().upper() for ind, val in pos_assertions}
+    ind_pos = {ind: ind_pos_explicite.get(ind, classe_vers_pos(cls)) for ind, cls in ind_classes.items()}
 
     # Extraction des liaisons de contextes (Object Properties)
     context_assertions = re.findall(r'<ObjectPropertyAssertion>\s*<ObjectProperty IRI="#aPourContexte"/>\s*<NamedIndividual IRI="#([^"]+)"/>\s*<NamedIndividual IRI="#([^"]+)"/>\s*</ObjectPropertyAssertion>', xml_str)
@@ -61,6 +75,7 @@ def charger_ontologie_xml(fichier_chemin):
         "ids": ind_id,
         "contexts": ind_contexts,
         "keywords": ctx_mots,
+        "pos": ind_pos,
         "all_individuals": list(all_individuals)
     }
 
@@ -118,9 +133,23 @@ def chercher_individu_dans_ontologie(mot_brut, lemme, target_idx, tokens):
             candidates.append(name)
             
     if not candidates: return None
+
+    # DÉSAMBIGUÏSATION PAR CATÉGORIE GRAMMATICALE (POS)
+    # Ex: "je marche jusqu'au marché" -> "marche" (VERB) = marcher,
+    #     "marché" (NOUN) = le marché. On filtre les candidats selon le POS
+    #     que spaCy donne au token courant.
+    pos_groupe = None
+    if 0 <= target_idx < len(tokens):
+        pos_groupe = {"VERB": "VERB", "AUX": "VERB", "NOUN": "NOUN",
+                      "PROPN": "NOUN", "ADJ": "ADJ", "ADV": "ADV"}.get(tokens[target_idx].pos_)
+    if pos_groupe and len(candidates) > 1:
+        filtres = [c for c in candidates if ONTOLOGY_DATA["pos"].get(c) == pos_groupe]
+        if filtres:  # fallback : si le filtre vide tout, on garde les candidats d'origine
+            candidates = filtres
+
     if len(candidates) == 1:
         return candidates[0]
-    
+
     # PTIT ALGORITHME DE SCORING (PONDÉRÉ PAR LA DISTANCE)
     scores_contextes = {ctx: 0.0 for ctx in ONTOLOGY_DATA["keywords"]}
     
@@ -272,7 +301,7 @@ def analyser_texte(texte_brut):
             id_arasaac = None
             type_mot = None
             if not next_token.is_punct and lemme_elide not in mots_interdits and next_token.text.lower() != "mais":
-                ind_trouve = chercher_individu_dans_ontologie(next_token.text, next_token.lemma_, i + 1, tokens)
+                ind_trouve = chercher_individu_dans_ontologie(next_token.text, next_token.lemma_, next_token.i, tokens)
                 if ind_trouve: 
                     id_arasaac = extraire_id_depuis_individu(ind_trouve)
                     cls_name = ONTOLOGY_DATA["classes"].get(ind_trouve, "")
@@ -304,7 +333,8 @@ def analyser_texte(texte_brut):
         type_mot = None
         
         if not token.is_punct and lemme not in mots_interdits and token.text.lower() != "mais":
-            ind_trouve = chercher_individu_dans_ontologie(token.text, token.lemma_, i, tokens)
+            # token.i = vrai index du token (i a pu être incrémenté par la fusion ponctuation)
+            ind_trouve = chercher_individu_dans_ontologie(token.text, token.lemma_, token.i, tokens)
             if ind_trouve: 
                 id_arasaac = extraire_id_depuis_individu(ind_trouve)
                 cls_name = ONTOLOGY_DATA["classes"].get(ind_trouve, "")
@@ -352,4 +382,6 @@ def generer_route():
 
 
 if __name__ == '__main__':
-    app.run(debug=True, port=5006)
+    # PORT fourni par l'hébergeur (HF Spaces = 7860), 5006 en local par défaut.
+    port = int(os.environ.get("PORT", 5006))
+    app.run(host="0.0.0.0", port=port, debug=False, threaded=True)

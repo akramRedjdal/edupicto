@@ -1,0 +1,17 @@
+cd /home/akram/Bureau/Suivis/Projet_Picto
+
+# éviter de committer le backup
+echo "*.bak" >> .gitignore        # (ou: rm EduPicto.owx.bak)
+
+git add -A
+git commit -m "Désambiguïsation polysémie par catégorie grammaticale (POS)
+
+- POS dérivé de la classe d'ontologie (+ override categorieGrammaticale)
+- filtre des candidats par POS spaCy dans chercher_individu
+- fix target_idx (token.i au lieu de i muté par fusion ponctuation)
+- ajout concepts marcher/marché"
+
+git push
+
+
+

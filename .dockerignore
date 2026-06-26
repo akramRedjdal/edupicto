@@ -1,0 +1,17 @@
+# Frontend (déployé séparément sur GitHub Pages / Netlify)
+picto_express/
+
+# Modèles re-téléchargés au runtime
+AntoineBourgois/
+
+# Artefacts
+__pycache__/
+*.pyc
+*.log
+*.bak
+coref.html
+outputs_old/
+.git/
+.vscode/
+.claude/
+index.html

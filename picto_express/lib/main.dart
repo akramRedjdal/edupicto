@@ -15,6 +15,12 @@ const kTextDark = Color(0xFF1A1A1A);
 const kTextMid = Color(0xFF666666);
 const kTextLight = Color(0xFF999999);
 
+// ─── URL du serveur backend ─────────────────────────────────────────────────
+// Par défaut localhost (dev). Pour un build déployé, surcharger au build :
+//   flutter build web --dart-define=SERVER_URL=https://<user>-<space>.hf.space
+const String kServerUrl =
+    String.fromEnvironment('SERVER_URL', defaultValue: 'http://localhost:5006');
+
 // ─── Modèle Histoire ────────────────────────────────────────────────────────
 class Histoire {
   final String titre;
@@ -523,7 +529,7 @@ class ReglagePage extends StatelessWidget {
               delegate: SliverChildListDelegate([
                 _ReglageSection(titre: 'Application', items: [_ReglageItem(icone: Icons.language_rounded, label: 'Langue', valeur: 'Français'), _ReglageItem(icone: Icons.text_fields_rounded, label: 'Taille du texte', valeur: 'Normal')]),
                 const SizedBox(height: 16),
-                _ReglageSection(titre: 'Serveur', items: [_ReglageItem(icone: Icons.dns_rounded, label: 'URL du serveur', valeur: 'localhost:5006')]),
+                _ReglageSection(titre: 'Serveur', items: [_ReglageItem(icone: Icons.dns_rounded, label: 'URL du serveur', valeur: kServerUrl)]),
                 const SizedBox(height: 16),
                 _ReglageSection(titre: 'À propos', items: [_ReglageItem(icone: Icons.info_outline_rounded, label: 'Version', valeur: '1.0.0'), _ReglageItem(icone: Icons.school_rounded, label: 'Projet ESIEE Paris', valeur: '')]),
               ]),
@@ -657,7 +663,7 @@ class _GenererPageState extends State<GenererPage> {
     setState(() { _enChargement = true; _erreur = null; _motsResultat = []; _texteGenere = null; });
     try {
       final reponse = await http.post(
-        Uri.parse('http://localhost:5006/generer'),
+        Uri.parse('$kServerUrl/generer'),
         headers: {'Content-Type': 'application/json; charset=UTF-8'},
         body: jsonEncode({'theme': _theme.text.trim()}),
       );
@@ -782,7 +788,7 @@ class _VisionneuseHistoirePageState extends State<VisionneuseHistoirePage> {
     setState(() { _enChargement = true; _erreur = null; });
     try {
       final reponse = await http.post(
-        Uri.parse('http://localhost:5006/pictogramiser'),
+        Uri.parse('$kServerUrl/pictogramiser'),
         headers: {'Content-Type': 'application/json; charset=UTF-8'},
         body: jsonEncode({'texte': widget.histoire.texte}),
       );

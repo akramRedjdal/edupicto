@@ -2310,30 +2310,6 @@
         <IRI>#œuf</IRI>
         <Literal datatypeIRI="http://www.w3.org/2001/XMLSchema#integer">2427</Literal>
     </AnnotationAssertion>
-    <Declaration>
-        <NamedIndividual IRI="#marcher"/>
-    </Declaration>
-    <ClassAssertion>
-        <Class IRI="#Action"/>
-        <NamedIndividual IRI="#marcher"/>
-    </ClassAssertion>
-    <AnnotationAssertion>
-        <AnnotationProperty IRI="#arasaac_id"/>
-        <IRI>#marcher</IRI>
-        <Literal datatypeIRI="http://www.w3.org/2001/XMLSchema#integer">2432</Literal>
-    </AnnotationAssertion>
-    <Declaration>
-        <NamedIndividual IRI="#marché"/>
-    </Declaration>
-    <ClassAssertion>
-        <Class IRI="#Lieu"/>
-        <NamedIndividual IRI="#marché"/>
-    </ClassAssertion>
-    <AnnotationAssertion>
-        <AnnotationProperty IRI="#arasaac_id"/>
-        <IRI>#marché</IRI>
-        <Literal datatypeIRI="http://www.w3.org/2001/XMLSchema#integer">21976</Literal>
-    </AnnotationAssertion>
 </Ontology>
 
 
