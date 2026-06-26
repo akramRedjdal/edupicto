@@ -1,6 +1,6 @@
 # EduPicto — Aide à la lecture en pictogrammes
 
-Application d'aide à la lecture pour enfants autistes. Un texte est transformé en
+Application d'aide à la lecture pour enfants avec autisme. Un texte est transformé en
 **pictogrammes ARASAAC** (avec le mot écrit dessous), en s'appuyant sur une
 **ontologie de concepts** et une **résolution de coréférence** (les pronoms « il /
 elle » renvoient au bon personnage).
@@ -145,8 +145,7 @@ flutter build apk      # Android
   d'analyse (CamemBERT-large). `spacy.prefer_gpu()` bascule automatiquement.
 - **Ontologie** : `EduPicto.owx` (format OWL/XML, éditable avec Protégé). Les
   concepts y sont reliés à des `id ARASAAC` et regroupés par classe.
-- **Modèles** : le dossier `AntoineBourgois/` (modèles propp-fr) est ignoré par git
-  et recréé automatiquement au premier lancement du serveur.
+
 
 ## Structure
 
