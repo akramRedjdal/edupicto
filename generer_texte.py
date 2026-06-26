@@ -111,9 +111,15 @@ def construire_prompt(concepts, theme=None):
     theme_txt = f"\nThème souhaité : {theme}." if theme else ""
 
     system = (
-        "Tu écris des textes très simples pour aider des enfants autistes à lire "
-        "avec des pictogrammes. Phrases courtes, présent de l'indicatif, une idée "
-        "par phrase."
+        "Tu écris des textes très simples pour aider des enfants à lire avec des "
+        "pictogrammes. Phrases courtes, une idée par phrase. "
+        "RÈGLES DE FORME STRICTES : "
+        "(1) Conjugue les verbes au PRÉSENT de l'indicatif (ex: « elle prépare », "
+        "JAMAIS « elle préparer »). "
+        "(2) AUCUN formatage : pas de gras, pas d'astérisques (*), pas de listes, "
+        "pas d'emoji. "
+        "(3) AUCUN commentaire, note, parenthèse explicative ni texte entre crochets. "
+        "Réponds UNIQUEMENT par le texte de l'histoire."
     )
 
     user = f"""Écris un court texte (6 à 10 phrases) en français.{theme_txt}
@@ -128,6 +134,8 @@ Chaque nom, verbe et adjectif que tu écris DOIT figurer dans la palette ci-dess
   est listé ; écrire "enfourner" alors que seuls "placer" et "four" sont listés.
 - Seuls les petits mots de liaison sont libres (le, la, un, des, dans, et, avec,
   pour, il, elle, ils, elles, son, sa, ses...).
+- CONJUGUE les verbes au présent (« elle coupe », pas « elle couper »).
+- AUCUN astérisque, AUCUN gras, AUCUNE note ni explication entre parenthèses/crochets.
 
 POUR TESTER LA CORÉFÉRENCE :
 - Choisis UN seul personnage de la liste, nomme-le au début.
@@ -171,7 +179,7 @@ def generer(theme=None):
                  "Content-Type": "application/json"},
         json={
             "model": MODELE,
-            "temperature": 0.3,
+            "temperature": 0.2,
             "messages": [
                 {"role": "system", "content": system},
                 {"role": "user", "content": user},
@@ -180,7 +188,21 @@ def generer(theme=None):
         timeout=60,
     )
     resp.raise_for_status()
-    return resp.json()["choices"][0]["message"]["content"].strip()
+    texte = resp.json()["choices"][0]["message"]["content"].strip()
+    return nettoyer_sortie(texte)
+
+
+def nettoyer_sortie(texte):
+    """Filet de sécurité : retire le formatage et les notes que le modèle
+    ajoute parfois (gras **, emoji, note finale entre crochets ou après ---)."""
+    # Couper toute note/commentaire en fin de réponse
+    for sep in ["\n---", "\n*[", "\n[Note", "\n(Note", "\nNote :"]:
+        idx = texte.find(sep)
+        if idx != -1:
+            texte = texte[:idx]
+    # Retirer le gras/italique markdown
+    texte = texte.replace("**", "").replace("__", "").replace("*", "")
+    return texte.strip()
 
 
 def envoyer_au_serveur(texte, url="http://localhost:5006/pictogramiser"):
